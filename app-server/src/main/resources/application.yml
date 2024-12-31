@@ -1,0 +1,10 @@
+com:
+  lava:
+    ldbc:
+      query-dsls:
+        -
+          name: ssss
+          query: "select  #{?} from customers limit #{?}"
+        -
+          name: bbbb
+          query: "#{carPark.test}"

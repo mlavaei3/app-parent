@@ -1,0 +1,244 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Swagger English App
+  license:
+    name: MIT
+servers:
+  - url: http://app.swagger.io/v1
+paths:
+  /customer:
+    get:
+      summary: List all customers
+      operationId: listPets
+      tags:
+        - customer
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: A paged array of customers
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomersDTO"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a customer
+      operationId: addCustomer
+      tags:
+        - customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerDTO'
+      responses:
+        '200':
+          description: Null response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerDTO"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /customer/{customerId}:
+    get:
+      summary: Info for a specific customer
+      operationId: showPetById
+      tags:
+        - customer
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          description: The id of the customer to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerDTO"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /collection:
+    get:
+      summary: List all collection
+      operationId: listCollection
+      tags:
+        - collection
+      parameters:
+        - name: offset
+          in: query
+          description: How many items ignore (default 0)
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: A paged array of collection
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CollectionsDTO"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /lesson/{lessonId}:
+    get:
+      summary: Info for a specific lesson
+      operationId: getLesson
+      tags:
+        - lesson
+      parameters:
+        - name: lessonId
+          in: path
+          required: true
+          description: The id of the lesson to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LessonDTO"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    CustomerDTO:
+      type: object
+      required:
+        - id
+        - name
+        - family
+        - birthDate
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        family:
+          type: string
+        birthDate:
+          type: string
+          format: date
+    CustomersDTO:
+      type: array
+      items:
+        $ref: "#/components/schemas/CustomerDTO"
+    CollectionDTO:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - fee
+        - lang
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        lang:
+          type: string
+        fee:
+          type: number
+          format: double
+    CollectionsDTO:
+        type: array
+        items:
+          $ref: "#/components/schemas/CollectionDTO"
+    LessonDTO:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - fee
+        - lang
+        - score
+        - level
+        - unit
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        lang:
+          type: string
+        fee:
+          type: number
+          format: double
+        score:
+          type: integer
+          format: int32
+        level:
+          type: string
+        unit:
+          type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
